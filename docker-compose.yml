@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    container_name: k8s-for-stupids
+    restart: unless-stopped
+    ports:
+      - "8095:80"

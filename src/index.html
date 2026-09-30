@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>k8s-for-stupids — bootcamp terminal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar" id="topbar" title="click = skip boot">
+  <span class="wheel">⎈</span>
+  <span class="title">K8S-FOR-STUPIDS SYSTEM</span>
+  <span class="sub">ldgnu@outblast:~$ ./learn — 10 módulos · quiz con porqué · validador de logs</span>
+  <span class="skip">click to skip</span>
+</header>
+<div class="layout">
+  <nav class="side">
+    <div class="prompt">$ whoami</div>
+    <input id="whoami" maxlength="24" placeholder="tu-nombre" autocomplete="off">
+    <div class="prompt" style="margin-top:12px">$ ls content/ && ./quiz</div>
+    <div id="mods"></div>
+    <p class="muted" id="total"></p>
+  </nav>
+  <main class="main">
+    <div class="term" id="boot">$ ./learn --boot<br><span class="ps1">></span> <span id="typed"></span><span class="ps1">_</span></div>
+    <h2 id="mtitle"></h2>
+    <p class="muted" id="mref"></p>
+    <div class="progress"><i id="bar"></i></div>
+    <section id="quiz"></section>
+    <section id="valid" style="margin-top:26px"></section>
+    <section id="report" style="margin-top:26px"></section>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

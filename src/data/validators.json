@@ -1,0 +1,51 @@
+{
+  "git-log": {
+    "title": "M0 — git log",
+    "prompt": "Pega la salida de `git log --oneline -5`",
+    "must_contain": [],
+    "must_match": ["[0-9a-f]{4,}"],
+    "must_not_contain": ["fatal", "not a git repository"],
+    "success": "Log válido. Git está guardando fotos. Puedes avanzar.",
+    "fail_hint": "Vacío o fatal = no estás en el repo o no hay commits. Corre `git status` y `git log --oneline -5` en ~/Proyectos/k8s-for-stupids."
+  },
+  "docker-mounts": {
+    "title": "M1 — docker inspect mounts",
+    "prompt": "Pega `docker inspect freshrss --format '{{json .Mounts}}'`",
+    "must_contain": ["Destination", "Source"],
+    "must_not_contain": ["Error", "No such object"],
+    "success": "Mounts detectados. Sabes dónde vive el dato.",
+    "fail_hint": "No such object = nombre mal. Usa `docker ps -a --format '{{.Names}}'` y copia el nombre exacto."
+  },
+  "k3s-nodes": {
+    "title": "M3 — kubectl get nodes",
+    "prompt": "Pega `kubectl get nodes -o wide`",
+    "must_contain": ["Ready"],
+    "must_not_contain": ["NotReady", "Unable to connect", "refused"],
+    "success": "Nodo Ready. Cluster vivo.",
+    "fail_hint": "Connection refused = KUBECONFIG mal o k3s caído. `sudo systemctl status k3s` y `export KUBECONFIG=/etc/rancher/k3s/k3s.yaml`."
+  },
+  "k8s-pods": {
+    "title": "M4 — kubectl get pods",
+    "prompt": "Pega `kubectl get pods -n freshrss` o `-A`",
+    "must_contain": ["Running"],
+    "must_not_contain": ["CrashLoopBackOff", "ImagePullBackOff", "Pending"],
+    "success": "Pod Running. Si dice Pending/CrashLoop pega también el describe.",
+    "fail_hint": "CrashLoop = `logs --previous`. ImagePull = imagen/tag o GHCR sin login. Pending = CPU/RAM o PVC."
+  },
+  "freshrss-pods": {
+    "title": "M6 — freshrss Running + curl",
+    "prompt": "Pega `kubectl -n freshrss get pods` y `curl -f http://localhost:8080/i/`",
+    "must_contain": ["Running"],
+    "must_not_contain": ["CrashLoopBackOff", "404", "Failed"],
+    "success": "FreshRSS vivo. Borra el pod y verifica que vuelve solo.",
+    "fail_hint": "Si curl da 404 usa /i/ no /. Si Permission denied revisa runAsUser/fsGroup 33 vs 1000."
+  },
+  "saaquiz-health": {
+    "title": "M7 — saa-quiz /api/health",
+    "prompt": "Pega `curl -f http://127.0.0.1:8000/api/health` y `kubectl -n saa-quiz get pods`",
+    "must_contain": ["Running"],
+    "must_not_contain": ["Unauthorized", "ImagePullBackOff", "Read-only file system"],
+    "success": "API viva. Ahora prueba login con ADMIN_PASSWORD del Secret.",
+    "fail_hint": "Read-only /tmp = falta emptyDir. 401 = JWT_SECRET_KEY cambió, re-loguea o restaura /app/data completo."
+  }
+}

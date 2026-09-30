@@ -1,0 +1,134 @@
+/* k8s-for-stupids — terminal ONE DARK + azul Kubernetes, base solisjavier/pumphradio */
+:root {
+  --bg: #0d1117;
+  --panel: #131926;
+  --line: #243152;
+  --k8s: #326ce5;
+  --k8s-light: #9db8f0;
+  --paper: #ffffff;
+  --muted: #8b93a7;
+  --ok: #4cc38a;
+  --err: #ff6b5e;
+  --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.6;
+}
+a { color: var(--k8s-light); }
+.topbar {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  padding: 10px 18px;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  cursor: pointer;
+}
+.topbar .wheel { color: var(--k8s); font-weight: 700; }
+.topbar .title { color: var(--paper); font-weight: 700; letter-spacing: 2px; }
+.topbar .sub { color: var(--muted); }
+.topbar .skip { margin-left: auto; color: var(--muted); }
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: calc(100vh - 45px);
+}
+.side {
+  border-right: 1px solid var(--line);
+  padding: 14px;
+  background: var(--panel);
+}
+.side .prompt { color: var(--k8s-light); margin-bottom: 8px; }
+#whoami {
+  width: 100%;
+  font: inherit;
+  background: #000;
+  color: var(--paper);
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+}
+.mod {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--paper);
+  font: inherit;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.mod:hover { border-color: var(--line); }
+.mod.active { border-color: var(--k8s); }
+.mod .st { float: right; color: var(--muted); }
+.mod.done .st { color: var(--ok); }
+.main { padding: 22px 26px; max-width: 78ch; }
+.term {
+  border: 1px solid var(--line);
+  background: #000;
+  padding: 16px 18px;
+  cursor: pointer;
+}
+.term .ps1 { color: var(--k8s-light); }
+.btn {
+  font: inherit;
+  background: var(--k8s);
+  color: #fff;
+  border: 0;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btn.ghost { background: transparent; color: var(--k8s-light); border: 1px solid var(--k8s); }
+.opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  background: transparent;
+  color: var(--paper);
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  margin: 8px 0;
+  cursor: pointer;
+}
+.opt:hover { border-color: var(--k8s); }
+.opt.bad { border-color: var(--err); }
+.opt.good { border-color: var(--ok); }
+.why {
+  border-left: 3px solid var(--k8s);
+  padding: 8px 12px;
+  margin: 10px 0;
+  color: var(--paper);
+  background: var(--panel);
+}
+.why.err { border-color: var(--err); }
+textarea {
+  width: 100%;
+  min-height: 140px;
+  font: inherit;
+  background: #000;
+  color: var(--paper);
+  border: 1px solid var(--line);
+  padding: 12px;
+}
+.muted { color: var(--muted); }
+.ok { color: var(--ok); }
+.err { color: var(--err); }
+code { color: var(--k8s-light); }
+.progress { height: 6px; background: var(--line); margin: 12px 0; }
+.progress i { display: block; height: 100%; background: var(--k8s); width: 0; }
+:focus-visible { outline: 2px solid var(--k8s-light); outline-offset: 2px; }
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .side { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
