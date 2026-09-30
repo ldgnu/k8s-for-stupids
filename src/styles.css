@@ -267,7 +267,8 @@ code { color: var(--k8s-ink); }
     margin: 0;
     padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
   }
-  .tab { flex: 1 1 0; min-width: 0; padding: 10px 1px; text-align: center; font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
+  .tabs { gap: 4px; padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+  .tab { flex: 1 1 0; min-width: 0; padding: 10px 0; text-align: center; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tab .n { display: none; }
   .main { padding-bottom: 140px; }
   body { font-size: 16px; }

@@ -239,10 +239,10 @@ function renderTabs(m) {
   box.innerHTML = "";
   tabsFor(m).forEach((id) => {
     const label = t(tabLabel(id));
-    const parts = label.split("·");
+    const word = (label.split("·")[1] || label).trim();
     const b = document.createElement("button");
     b.className = "tab" + (id === tab ? " active" : "");
-    b.innerHTML = `<span class="n">$ ${esc(parts[0].trim())} ·</span> <span class="t">${esc((parts[1] || "").trim())}</span>`;
+    b.innerHTML = `<span class="n">$</span> ${esc(word)}`;
     b.onclick = () => { tab = id; store.set("kfs_tab", id); renderTabs(m); document.getElementById("tabs").scrollIntoView({block: "start"}); };
     box.appendChild(b);
   });
