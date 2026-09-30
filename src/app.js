@@ -116,7 +116,7 @@ function select(id) {
   store.set("kfs_cur", id);
   const m = MODULES.find((x) => x.id === id);
   $("#mtitle").textContent = m.title;
-  $("#mref").innerHTML = `Lee: <code>${m.file.replace("../", "")}</code> en content/. Luego responde abajo.`;
+  $("#mref").innerHTML = `Lee: <a href="${m.file}">${m.file}</a> y luego responde abajo.`;
   renderQuiz(m);
   renderValidator(m);
   renderMods();
