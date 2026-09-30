@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d1117">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>k8s-for-stupids — bootcamp terminal</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,10 +24,20 @@
 </header>
 <div class="layout">
   <nav class="side">
+    <pre class="wheelart">   \   |   /
+    \  |  /
+     \ | /
+  -----O-----
+     / | \
+    /  |  \
+   /   |   \</pre>
     <div class="prompt">$ whoami</div>
     <input id="whoami" maxlength="24" placeholder="tu-nombre / your-name" autocomplete="off">
-    <div class="prompt" style="margin-top:12px">$ ls content/ && ./quiz</div>
-    <div id="mods"></div>
+    <button id="modsToggle" class="only-mobile">Módulos ▾</button>
+    <div id="modsWrap">
+      <div class="prompt" style="margin-top:12px">$ ls content/ && ./quiz</div>
+      <div id="mods"></div>
+    </div>
     <p class="muted" id="total"></p>
   </nav>
   <main class="main">
@@ -31,10 +46,12 @@
     <h2 id="mtitle"></h2>
     <p class="muted" id="mbooks"></p>
     <div class="progress"><i id="bar"></i></div>
+    <nav class="tabs" id="tabs"></nav>
     <section id="doc"></section>
     <section id="quiz"></section>
     <section id="ex" style="margin-top:26px"></section>
     <section id="valid" style="margin-top:26px"></section>
+    <section id="ai" style="margin-top:26px"></section>
     <section id="report" style="margin-top:26px"></section>
   </main>
 </div>

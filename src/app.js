@@ -8,7 +8,7 @@ const I18N = {
   es: {
     subtitle: "ldgnu@outblast:~$ ./learn — 10 módulos · quiz con porqué · ejercicios · validador de logs",
     boot: "cargando 10 módulos... quiz 4/5 + 1 log para aprobar. Sin atajos.",
-    read: "01 · lee", quiz: "02 · quiz", ex: "03 · ejercicios", valid: "04 · valida tu log", report: "$ ./mi-reporte",
+    read: "01 · lee", quiz: "02 · quiz", ex: "03 · ejercicios", valid: "04 · validar", report: "$ ./mi-reporte",
     need45: "necesitas 4/5", firstTry: "10pts al primer intento, 5 si corregiste",
     correct: "exit 0 — correcto, bien ahí.", wrong: "exit 1 — te equivocaste.",
     whyWrong: "Por qué está mal:", theFix: "La posta:", reread: "Relee:",
@@ -21,6 +21,9 @@ const I18N = {
     total: "score total", rank: "rango", copy: "copiar reporte para compartir", copied: " copiado.",
     copyFail: " no se pudo copiar, selecciona el texto.", pass: "pass", lab: "lab",
     exerciseDone: "lo hice", reportUser: "$ ./mi-reporte --user",
+    aiTab: "05 · IA", aiTitle: "preguntale al tutor IA", aiHint: "Modelo gratuito, sin cuenta. Solo responde del temario de este módulo (quiz + libro citado). Si preguntás otra cosa, te redirige al módulo que corresponde.",
+    aiAsk: "./preguntar", aiWait: "pensando…", aiErr: "No respondió. Revisá tu internet e intentá de nuevo.",
+    aiPh: "¿por qué un Pod no se expone directo?", askQ: "preguntar sobre esta", aiLong: "Muy larga, resumila en 300 caracteres.",
     heroTitle: "¿Primera vez acá? Tranqui, es así:",
     heroSteps: ["<b>Lee</b> el módulo (sección 01, el texto está acá mismo).", "<b>Respondé</b> el quiz (sección 02). Si fallás te explico por qué, sin nota.", "<b>Hacé</b> los ejercicios en tu compu y <b>pegá</b> el log para validar (secciones 03 y 04)."],
     heroNote: "4 de 5 en el quiz + 1 log válido = módulo aprobado. Nadie ve tu progreso, queda en tu navegador.",
@@ -30,7 +33,7 @@ const I18N = {
   en: {
     subtitle: "ldgnu@outblast:~$ ./learn — 10 modules · quiz with why · exercises · log validator",
     boot: "loading 10 modules... quiz 4/5 + 1 log to pass. No shortcuts.",
-    read: "01 · read", quiz: "02 · quiz", ex: "03 · exercises", valid: "04 · validate your log", report: "$ ./my-report",
+    read: "01 · read", quiz: "02 · quiz", ex: "03 · exercises", valid: "04 · validate", report: "$ ./my-report",
     need45: "you need 4/5", firstTry: "10pts first try, 5 if you corrected",
     correct: "exit 0 — correct, nice.", wrong: "exit 1 — you got it wrong.",
     whyWrong: "Why it's wrong:", theFix: "The truth:", reread: "Re-read:",
@@ -43,6 +46,9 @@ const I18N = {
     total: "total score", rank: "rank", copy: "copy report to share", copied: " copied.",
     copyFail: " couldn't copy, select the text.", pass: "pass", lab: "lab",
     exerciseDone: "done it", reportUser: "$ ./my-report --user",
+    aiTab: "05 · AI", aiTitle: "ask the AI tutor", aiHint: "Free model, no account. It only answers from this module's syllabus (quiz + cited book). Anything else gets redirected to the right module.",
+    aiAsk: "./ask", aiWait: "thinking…", aiErr: "No answer. Check your connection and retry.",
+    aiPh: "why isn't a Pod exposed directly?", askQ: "ask about this", aiLong: "Too long, keep it under 300 chars.",
     heroTitle: "First time here? No stress, it works like this:",
     heroSteps: ["<b>Read</b> the module (section 01, the text is right here).", "<b>Answer</b> the quiz (section 02). If you fail I explain why, no grades.", "<b>Do</b> the exercises on your machine and <b>paste</b> the log to validate (sections 03 and 04)."],
     heroNote: "4 of 5 on the quiz + 1 valid log = module passed. Nobody sees your progress, it stays in your browser.",
@@ -59,6 +65,9 @@ let tries = store.get("kfs_tries", {});
 let logsOk = store.get("kfs_logs", {});
 let exDone = store.get("kfs_ex", {});
 let whoami = store.get("kfs_name", "anon");
+let tab = store.get("kfs_tab", "doc");
+const TABSECS = {doc: "doc", quiz: "quiz", ex: "ex", valid: "valid", ai: "ai"};
+let aiCtx = null;
 
 function rank(s) {
   if (s >= 450) return "Cluster Admin";
@@ -140,6 +149,10 @@ async function load() {
     h.dataset.theme = h.dataset.theme === "light" ? "dark" : "light";
     store.set("kfs_theme", h.dataset.theme);
   };
+  const mt = $("#modsToggle");
+  const mw = $("#modsWrap");
+  if (window.innerWidth <= 800) mw.classList.add("hidden");
+  mt.onclick = () => mw.classList.toggle("hidden");
   bootType();
   renderMods();
   select(cur);
@@ -208,7 +221,34 @@ function select(id) {
   renderQuiz(m);
   renderEx(m);
   renderValidator(m);
+  renderAI(m);
+  renderTabs(m);
   renderMods();
+}
+function tabsFor(m) {
+  const all = ["doc", "quiz", "ex", "ai", "valid"];
+  const list = m.validator ? all : all.filter((x) => x !== "valid");
+  if (!list.includes(tab)) tab = "doc";
+  return list;
+}
+function tabLabel(id) {
+  return {doc: "read", quiz: "quiz", ex: "ex", ai: "aiTab", valid: "valid"}[id];
+}
+function renderTabs(m) {
+  const box = $("#tabs");
+  box.innerHTML = "";
+  tabsFor(m).forEach((id) => {
+    const label = t(tabLabel(id));
+    const parts = label.split("·");
+    const b = document.createElement("button");
+    b.className = "tab" + (id === tab ? " active" : "");
+    b.innerHTML = `<span class="n">$ ${esc(parts[0].trim())} ·</span> <span class="t">${esc((parts[1] || "").trim())}</span>`;
+    b.onclick = () => { tab = id; store.set("kfs_tab", id); renderTabs(m); document.getElementById("tabs").scrollIntoView({block: "start"}); };
+    box.appendChild(b);
+  });
+  for (const [id, sec] of Object.entries(TABSECS)) {
+    document.getElementById(sec).style.display = id === tab ? "" : "none";
+  }
 }
 async function renderDoc(m) {
   const box = $("#doc");
@@ -256,6 +296,17 @@ function renderQuiz(m) {
       };
       div.appendChild(b);
     });
+    const ask = document.createElement("button");
+    ask.className = "btn ghost";
+    ask.style.marginTop = "4px";
+    ask.textContent = "? " + t("askQ");
+    ask.onclick = () => {
+      aiCtx = (LANG === "en" ? "About the quiz question: " : "Sobre esta pregunta del quiz: ") + it.q;
+      tab = "ai"; store.set("kfs_tab", "ai");
+      renderAI(m); renderTabs(m);
+      document.getElementById("tabs").scrollIntoView({block: "start"});
+    };
+    div.appendChild(ask);
     box.appendChild(div);
   });
   const ok = (answers[m.id] || []).filter((a, i) => a === list[i]?.answer).length;
@@ -286,6 +337,43 @@ function renderEx(m) {
     };
     box.appendChild(div);
   });
+}
+function renderAI(m) {
+  const box = $("#ai");
+  box.innerHTML = `<h3>$ ${t("aiTitle")}</h3><p class="muted">${t("aiHint")}</p>`;
+  const ta = document.createElement("textarea");
+  ta.placeholder = t("aiPh");
+  ta.style.minHeight = "80px";
+  if (aiCtx) ta.value = aiCtx;
+  const btn = document.createElement("button");
+  btn.className = "btn";
+  btn.textContent = t("aiAsk");
+  const out = document.createElement("div");
+  out.className = "why";
+  out.style.display = "none";
+  btn.onclick = async () => {
+    const q = ta.value.trim();
+    if (!q) return;
+    if (q.length > 300) { out.style.display = ""; out.innerHTML = `<span class="err">${t("aiLong")}</span>`; return; }
+    aiCtx = null;
+    btn.disabled = true;
+    out.style.display = "";
+    out.innerHTML = `<span class="muted">${t("aiWait")}</span>`;
+    const list = QUIZZES[m.quiz] || [];
+    const ctx = list.map((it, i) => `Q${i + 1}: ${it.q} | R: ${it.options[it.answer]}. Porqué: ${it.why}`).join(" ");
+    const sys = LANG === "en"
+      ? `You are the tutor of the k8s-for-stupids bootcamp. Module: ${titleOf(m)}. Book chapters cited: ${m.books}. You ONLY answer using this syllabus info: ${ctx}. Rules: max 120 words, English, command example if it fits. If the question is outside this module, say so in one line and point to the right module (M0 Git, M1 Docker, M2 concepts, M3 install, M4 kubectl, M5 GitOps, M6 freshrss, M7 saa-quiz, M8 actions). Never invent commands outside the bootcamp. Student question: `
+      : `Sos el tutor del bootcamp k8s-for-stupids. Módulo: ${titleOf(m)}. Capítulos del libro citados: ${m.books}. Respondés SOLO con esta info del temario: ${ctx}. Reglas: máx 120 palabras, español, ejemplo de comando si aplica. Si la pregunta sale de este módulo, decilo en una línea y redirigí al módulo correcto (M0 Git, M1 Docker, M2 conceptos, M3 instalación, M4 kubectl, M5 GitOps, M6 freshrss, M7 saa-quiz, M8 actions). Nunca inventes comandos fuera del bootcamp. Pregunta del alumno: `;
+    try {
+      const r = await fetch("https://text.pollinations.ai/" + encodeURIComponent(sys + q));
+      if (!r.ok) throw 0;
+      out.innerHTML = `<span class="ok">tutor:</span> ${esc(await r.text())}`;
+    } catch {
+      out.innerHTML = `<span class="err">${t("aiErr")}</span>`;
+    }
+    btn.disabled = false;
+  };
+  box.append(ta, document.createElement("br"), btn, out);
 }
 function renderValidator(m) {
   const box = $("#valid");
