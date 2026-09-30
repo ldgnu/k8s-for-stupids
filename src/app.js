@@ -21,6 +21,10 @@ const I18N = {
     total: "score total", rank: "rango", copy: "copiar reporte para compartir", copied: " copiado.",
     copyFail: " no se pudo copiar, selecciona el texto.", pass: "pass", lab: "lab",
     exerciseDone: "lo hice", reportUser: "$ ./mi-reporte --user",
+    heroTitle: "¿Primera vez acá? Tranqui, es así:",
+    heroSteps: ["<b>Lee</b> el módulo (sección 01, el texto está acá mismo).", "<b>Respondé</b> el quiz (sección 02). Si fallás te explico por qué, sin nota.", "<b>Hacé</b> los ejercicios en tu compu y <b>pegá</b> el log para validar (secciones 03 y 04)."],
+    heroNote: "4 de 5 en el quiz + 1 log válido = módulo aprobado. Nadie ve tu progreso, queda en tu navegador.",
+    rankHi: {"CrashLoopBackOff": "recién arrancás, todo bien", "Pending": "calentando motores", "ContainerCreating": "armando tu cluster mental", "Running": "ya vas andando solo", "Ready": "listo para migrar de verdad", "Cluster Admin": "ya podés enseñar a otros"},
     shareText: (u, p, r, m, t, l, lt, e, et) => `⎈ k8s-for-stupids — reporte de ${u}\nScore: ${p}/500 · Rango: ${r}\nMódulos: ${m}/${t} · Labs: ${l}/${lt} · Ejercicios: ${e}/${et}`
   },
   en: {
@@ -39,6 +43,10 @@ const I18N = {
     total: "total score", rank: "rank", copy: "copy report to share", copied: " copied.",
     copyFail: " couldn't copy, select the text.", pass: "pass", lab: "lab",
     exerciseDone: "done it", reportUser: "$ ./my-report --user",
+    heroTitle: "First time here? No stress, it works like this:",
+    heroSteps: ["<b>Read</b> the module (section 01, the text is right here).", "<b>Answer</b> the quiz (section 02). If you fail I explain why, no grades.", "<b>Do</b> the exercises on your machine and <b>paste</b> the log to validate (sections 03 and 04)."],
+    heroNote: "4 of 5 on the quiz + 1 valid log = module passed. Nobody sees your progress, it stays in your browser.",
+    rankHi: {"CrashLoopBackOff": "just starting out, that's fine", "Pending": "warming up", "ContainerCreating": "building your mental cluster", "Running": "you're walking on your own", "Ready": "ready to migrate for real", "Cluster Admin": "you can teach others"},
     shareText: (u, p, r, m, t, l, lt, e, et) => `⎈ k8s-for-stupids — ${u}'s report\nScore: ${p}/500 · Rank: ${r}\nModules: ${m}/${t} · Labs: ${l}/${lt} · Exercises: ${e}/${et}`
   }
 };
@@ -148,6 +156,12 @@ function applyLang() {
   document.documentElement.lang = LANG;
   $("#langBtn").textContent = LANG === "es" ? "ES" : "EN";
   $("#subtitle").textContent = t("subtitle");
+  renderHero();
+}
+function renderHero() {
+  const h = $("#hero");
+  if (!h) return;
+  h.innerHTML = `<h3>${t("heroTitle")}</h3><ol>${t("heroSteps").map((s) => `<li>${s}</li>`).join("")}</ol><div class="hi">${t("heroNote")}</div>`;
 }
 function bootType() {
   const msg = t("boot");
@@ -325,7 +339,7 @@ function renderReport() {
     return `<div>${modPassed(m) ? '<span class="ok">' + t("pass") + "</span>" : '<span class="muted">····</span>'} ${esc(titleOf(m))} <span class="muted">${scoreMod(m.quiz)}/${q.length * 10}pts ${t("lab")}:${lab}</span></div>`;
   }).join("");
   box.innerHTML = `<h3>${t("reportUser")} ${esc(whoami)}</h3>
-    <div class="term">${t("total")}: <b>${pts}/500</b> · ${t("rank")}: <b>${rank(pts)}</b><br>${t("mods")}: ${passed}/${MODULES.length} · ${t("labs")}: ${labs}/${totalLabs} · ${t("exercises")}: ${ed}/${en}</div>
+    <div class="term">${t("total")}: <b>${pts}/500</b> · ${t("rank")}: <b>${rank(pts)}</b> <span class="rankhi">(${t("rankHi")[rank(pts)]})</span><br>${t("mods")}: ${passed}/${MODULES.length} · ${t("labs")}: ${labs}/${totalLabs} · ${t("exercises")}: ${ed}/${en}</div>
     <div style="margin-top:10px">${rows}</div>`;
   const btn = document.createElement("button");
   btn.className = "btn ghost";
