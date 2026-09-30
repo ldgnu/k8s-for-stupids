@@ -1,0 +1,41 @@
+{
+  "m0-git": [
+    {"t": "Tu primera rama de lab", "steps": ["git checkout -b lab/ejercicio", "echo ok >> docs/prueba.txt", "git add docs/prueba.txt && git commit -m \"docs: prueba\"", "git push -u origin lab/ejercicio", "Abrí el PR en GitHub, mergealo, y borrá la rama local y el archivo"]},
+    {"t": "Rompé y arreglá el remoto", "steps": ["git remote -v y anotá la URL", "git remote set-url origin git@github.com:ldgnu/k8s-for-stupids.git", "ssh -T git@github.com y verificá el Hi"]}
+  ],
+  "m1-docker": [
+    {"t": "Radiografía de freshrss", "steps": ["docker inspect freshrss con Mounts, Env y PortBindings", "docker logs freshrss --tail 30", "Pegá todo en docs/02-arquitectura-actual-docker.md bajo ## freshrss"]},
+    {"t": "Cazá todos los composes", "steps": ["find en /home /opt /root buscando *compose*.y*ml", "Copiá cada uno a docs/compose-original/NOMBRE/ sin editar", "Anotá cuáles apps NO tienen compose (nacieron en Portainer)"]}
+  ],
+  "m2-k8s": [
+    {"t": "Tabla de traducción propia", "steps": ["En un papel o .md escribí de memoria: compose service/port/volumes/environment/restart/healthcheck → qué objeto K8s", "Compará con el Módulo 2 y corregí", "Explicá en voz alta qué pasa si borrás un Pod y si borrás un PVC"]}
+  ],
+  "m3-install": [
+    {"t": "Instala el cluster", "steps": ["Instalá kubectl y verificá --client", "Instalá k3s con --disable traefik", "kubectl get nodes tiene que decir Ready", "Validá el log acá arriba"]},
+    {"t": "Rompé y curá a propósito", "steps": ["sudo systemctl stop k3s, mirá qué dice kubectl get nodes", "sudo systemctl start k3s y verificá que vuelve a Ready", "Anotá cuánto tardó"]}
+  ],
+  "m4-kubectl": [
+    {"t": "El lab hola que se auto-cura", "steps": ["create deployment hola nginx:alpine en ns lab", "describe + logs del pod", "delete pod y verificá que nace otro solo con otro nombre", "expose + port-forward + curl, después delete ns lab"]},
+    {"t": "Lee un CrashLoop", "steps": ["Corré un pod con imagen inexistente a propósito", "kubectl get events y encontrá ImagePullBackOff", "Borralo y explicá la diferencia con CrashLoopBackOff"]}
+  ],
+  "m5-gitops": [
+    {"t": "Secreto sin commitear", "steps": ["kubectl create secret generic prueba --from-literal=X=1 --dry-run -o yaml", "Verificá que el valor sale en base64 y que el archivo NO va a git", "Creá secret.example.yaml con CHANGEME y commitealo"]},
+    {"t": "Service ciego", "steps": ["Creá un Service con selector que no matchea ningún Pod", "kubectl get endpoints y confirmá <none>", "Arreglá el selector y verificá que aparecen IPs"]}
+  ],
+  "m6-freshrss": [
+    {"t": "Backup antes de tocar", "steps": ["docker stop freshrss", "tar -czf /tmp/freshrss-data-FECHA.tgz del Source del Mount", "docker start freshrss y verificá que anda"]},
+    {"t": "Manifiestos y prueba", "steps": ["Creá namespace + pvc + deployment + service", "apply, logs hasta Ready 1/1", "port-forward + curl a /i/", "Borrá el pod y confirmá que vuelve sin perder datos"]}
+  ],
+  "m7-saaquiz": [
+    {"t": "Imagen a GHCR", "steps": ["docker build -t ghcr.io/TU_USER/saa-quiz-app:test .", "Corré local en otro puerto y curl a /api/health", "login a ghcr y push del tag test"]},
+    {"t": "Secretos reales", "steps": ["Generá 2 secretos con openssl rand -hex 32", "kubectl create secret generic saa-quiz-env sin commitear", "Explicá qué se rompería si el PVC nace vacío con otro JWT"]}
+  ],
+  "m8-actions": [
+    {"t": "CI en rojo y en verde", "steps": ["Rompé un yaml a propósito en una rama y pusheá", "Mirá fallar el workflow en Actions", "Arreglá, pusheá y mirá el verde antes de mergear"]},
+    {"t": "Filtro por paths", "steps": ["Agregá paths: al workflow de build", "Pusheá solo docs y verificá que el build se saltea", "Pusheá código y verificá que corre"]}
+  ],
+  "m9-fin": [
+    {"t": "Runbook de rollback", "steps": ["Escribí en 5 líneas cómo volver freshrss a Docker", "Probá el rollback en un horario tranqui", "Anotá cuánto tardó y qué falló"]},
+    {"t": "Tabla de 7 días", "steps": ["Armá tabla fecha/estado para la app migrada", "Un check diario de curl + logs", "Recién al día 7 apagás el container Docker"]}
+  ]
+}

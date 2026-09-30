@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,13 +10,17 @@
 <header class="topbar" id="topbar" title="click = skip boot">
   <span class="wheel">⎈</span>
   <span class="title">K8S-FOR-STUPIDS SYSTEM</span>
-  <span class="sub">ldgnu@outblast:~$ ./learn — 10 módulos · quiz con porqué · validador de logs</span>
+  <span class="sub" id="subtitle"></span>
+  <span class="toggles">
+    <button id="langBtn" title="switch language">ES</button>
+    <button id="themeBtn" title="claro / oscuro">◐</button>
+  </span>
   <span class="skip">click to skip</span>
 </header>
 <div class="layout">
   <nav class="side">
     <div class="prompt">$ whoami</div>
-    <input id="whoami" maxlength="24" placeholder="tu-nombre" autocomplete="off">
+    <input id="whoami" maxlength="24" placeholder="tu-nombre / your-name" autocomplete="off">
     <div class="prompt" style="margin-top:12px">$ ls content/ && ./quiz</div>
     <div id="mods"></div>
     <p class="muted" id="total"></p>
@@ -24,9 +28,11 @@
   <main class="main">
     <div class="term" id="boot">$ ./learn --boot<br><span class="ps1">></span> <span id="typed"></span><span class="ps1">_</span></div>
     <h2 id="mtitle"></h2>
-    <p class="muted" id="mref"></p>
+    <p class="muted" id="mbooks"></p>
     <div class="progress"><i id="bar"></i></div>
+    <section id="doc"></section>
     <section id="quiz"></section>
+    <section id="ex" style="margin-top:26px"></section>
     <section id="valid" style="margin-top:26px"></section>
     <section id="report" style="margin-top:26px"></section>
   </main>

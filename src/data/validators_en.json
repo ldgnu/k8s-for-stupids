@@ -1,0 +1,51 @@
+{
+  "git-log": {
+    "title": "M0 — git log",
+    "prompt": "Paste the output of `git log --oneline -5`",
+    "must_contain": [],
+    "must_match": ["[0-9a-f]{4,}"],
+    "must_not_contain": ["fatal", "not a git repository"],
+    "success": "Valid log. Git is saving snapshots. You may advance.",
+    "fail_hint": "Empty or fatal = you're not in the repo or there are no commits. Run `git status` and `git log --oneline -5` in ~/Proyectos/k8s-for-stupids."
+  },
+  "docker-mounts": {
+    "title": "M1 — docker inspect mounts",
+    "prompt": "Paste `docker inspect freshrss --format '{{json .Mounts}}'`",
+    "must_contain": ["Destination", "Source"],
+    "must_not_contain": ["Error", "No such object"],
+    "success": "Mounts detected. You know where the data lives.",
+    "fail_hint": "No such object = wrong name. Use `docker ps -a --format '{{.Names}}'` and copy the exact name."
+  },
+  "k3s-nodes": {
+    "title": "M3 — kubectl get nodes",
+    "prompt": "Paste `kubectl get nodes -o wide`",
+    "must_contain": ["Ready"],
+    "must_not_contain": ["NotReady", "Unable to connect", "refused"],
+    "success": "Node Ready. Cluster alive.",
+    "fail_hint": "Connection refused = bad KUBECONFIG or k3s down. `sudo systemctl status k3s` and `export KUBECONFIG=/etc/rancher/k3s/k3s.yaml`."
+  },
+  "k8s-pods": {
+    "title": "M4 — kubectl get pods",
+    "prompt": "Paste `kubectl get pods -n freshrss` or `-A`",
+    "must_contain": ["Running"],
+    "must_not_contain": ["CrashLoopBackOff", "ImagePullBackOff", "Pending"],
+    "success": "Pod Running. If it says Pending/CrashLoop paste the describe too.",
+    "fail_hint": "CrashLoop = `logs --previous`. ImagePull = wrong name/tag or GHCR without login. Pending = CPU/RAM or PVC."
+  },
+  "freshrss-pods": {
+    "title": "M6 — freshrss Running + curl",
+    "prompt": "Paste `kubectl -n freshrss get pods` and `curl -f http://localhost:8080/i/`",
+    "must_contain": ["Running"],
+    "must_not_contain": ["CrashLoopBackOff", "404", "Failed"],
+    "success": "FreshRSS alive. Delete the pod and verify it comes back alone.",
+    "fail_hint": "If curl gives 404 use /i/ not /. If Permission denied check runAsUser/fsGroup 33 vs 1000."
+  },
+  "saaquiz-health": {
+    "title": "M7 — saa-quiz /api/health",
+    "prompt": "Paste `curl -f http://127.0.0.1:8000/api/health` and `kubectl -n saa-quiz get pods`",
+    "must_contain": ["Running"],
+    "must_not_contain": ["Unauthorized", "ImagePullBackOff", "Read-only file system"],
+    "success": "API alive. Now log in with the Secret's ADMIN_PASSWORD.",
+    "fail_hint": "Read-only /tmp = missing emptyDir. 401 = JWT_SECRET_KEY changed, re-login or restore full /app/data."
+  }
+}

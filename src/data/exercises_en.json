@@ -1,0 +1,41 @@
+{
+  "m0-git": [
+    {"t": "Your first lab branch", "steps": ["git checkout -b lab/exercise", "echo ok >> docs/test.txt", "git add docs/test.txt && git commit -m \"docs: test\"", "git push -u origin lab/exercise", "Open the PR on GitHub, merge it, and delete the local branch and file"]},
+    {"t": "Break and fix the remote", "steps": ["git remote -v and note the URL", "git remote set-url origin git@github.com:ldgnu/k8s-for-stupids.git", "ssh -T git@github.com and verify the Hi"]}
+  ],
+  "m1-docker": [
+    {"t": "freshrss X-ray", "steps": ["docker inspect freshrss for Mounts, Env and PortBindings", "docker logs freshrss --tail 30", "Paste everything into docs/02-arquitectura-actual-docker.md under ## freshrss"]},
+    {"t": "Hunt every compose", "steps": ["find in /home /opt /root for *compose*.y*ml", "Copy each to docs/compose-original/NAME/ unedited", "Note which apps have NO compose (born in Portainer)"]}
+  ],
+  "m2-k8s": [
+    {"t": "Your own translation table", "steps": ["From memory, write: compose service/port/volumes/environment/restart/healthcheck → which K8s object", "Compare with Module 2 and correct", "Say out loud what happens if you delete a Pod vs a PVC"]}
+  ],
+  "m3-install": [
+    {"t": "Install the cluster", "steps": ["Install kubectl and verify --client", "Install k3s with --disable traefik", "kubectl get nodes must say Ready", "Validate the log above"]},
+    {"t": "Break and heal on purpose", "steps": ["sudo systemctl stop k3s, see what kubectl get nodes says", "sudo systemctl start k3s and verify it returns to Ready", "Note how long it took"]}
+  ],
+  "m4-kubectl": [
+    {"t": "The self-healing hola lab", "steps": ["create deployment hola nginx:alpine in ns lab", "describe + logs of the pod", "delete pod and verify another is born alone with a new name", "expose + port-forward + curl, then delete ns lab"]},
+    {"t": "Read a CrashLoop", "steps": ["Run a pod with a nonexistent image on purpose", "kubectl get events and find ImagePullBackOff", "Delete it and explain the difference vs CrashLoopBackOff"]}
+  ],
+  "m5-gitops": [
+    {"t": "Secret without committing", "steps": ["kubectl create secret generic test --from-literal=X=1 --dry-run -o yaml", "Verify the value is base64 and the file does NOT go to git", "Create secret.example.yaml with CHANGEME and commit it"]},
+    {"t": "Blind Service", "steps": ["Create a Service with a selector matching no Pod", "kubectl get endpoints and confirm <none>", "Fix the selector and verify IPs appear"]}
+  ],
+  "m6-freshrss": [
+    {"t": "Backup before touching", "steps": ["docker stop freshrss", "tar -czf /tmp/freshrss-data-DATE.tgz from the Mount Source", "docker start freshrss and verify it works"]},
+    {"t": "Manifests and test", "steps": ["Create namespace + pvc + deployment + service", "apply, logs until Ready 1/1", "port-forward + curl to /i/", "Delete the pod and confirm it returns with data intact"]}
+  ],
+  "m7-saaquiz": [
+    {"t": "Image to GHCR", "steps": ["docker build -t ghcr.io/YOUR_USER/saa-quiz-app:test .", "Run locally on another port and curl /api/health", "login to ghcr and push the test tag"]},
+    {"t": "Real secrets", "steps": ["Generate 2 secrets with openssl rand -hex 32", "kubectl create secret generic saa-quiz-env without committing", "Explain what would break if the PVC is born empty with another JWT"]}
+  ],
+  "m8-actions": [
+    {"t": "Red and green CI", "steps": ["Break a yaml on purpose on a branch and push", "Watch the workflow fail in Actions", "Fix, push and see green before merging"]},
+    {"t": "Paths filter", "steps": ["Add paths: to the build workflow", "Push docs only and verify the build is skipped", "Push code and verify it runs"]}
+  ],
+  "m9-fin": [
+    {"t": "Rollback runbook", "steps": ["Write in 5 lines how to return freshrss to Docker", "Test the rollback at a quiet hour", "Note how long it took and what failed"]},
+    {"t": "7-day table", "steps": ["Make a date/status table for the migrated app", "One daily check of curl + logs", "Only on day 7 shut down the Docker container"]}
+  ]
+}
