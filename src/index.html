@@ -35,7 +35,7 @@
     <input id="whoami" maxlength="24" placeholder="tu-nombre / your-name" autocomplete="off">
     <button id="modsToggle" class="only-mobile">Módulos ▾</button>
     <div id="modsWrap">
-      <div class="prompt" style="margin-top:12px">$ ls content/ && ./quiz</div>
+      <div class="prompt" style="margin-top:12px" id="curTitle">$ ./contenido-del-curso</div>
       <div id="mods"></div>
     </div>
     <p class="muted" id="total"></p>
@@ -46,12 +46,15 @@
     <h2 id="mtitle"></h2>
     <p class="muted" id="mbooks"></p>
     <div class="progress"><i id="bar"></i></div>
-    <nav class="tabs" id="tabs"></nav>
     <section id="doc"></section>
     <section id="quiz"></section>
     <section id="ex" style="margin-top:26px"></section>
     <section id="valid" style="margin-top:26px"></section>
     <section id="ai" style="margin-top:26px"></section>
+    <nav class="modnav">
+      <button class="btn ghost" id="prevMod"></button>
+      <button class="btn" id="nextMod"></button>
+    </nav>
     <section id="report" style="margin-top:26px"></section>
   </main>
 </div>

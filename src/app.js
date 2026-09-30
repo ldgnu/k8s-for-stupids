@@ -21,6 +21,7 @@ const I18N = {
     total: "score total", rank: "rango", copy: "copiar reporte para compartir", copied: " copiado.",
     copyFail: " no se pudo copiar, selecciona el texto.", pass: "pass", lab: "lab",
     exerciseDone: "lo hice", reportUser: "$ ./mi-reporte --user",
+    prev: "anterior", next: "siguiente", course: "./contenido-del-curso",
     aiTab: "05 · IA", aiTitle: "preguntale al tutor IA", aiHint: "Modelo gratuito, sin cuenta. Solo responde del temario de este módulo (quiz + libro citado). Si preguntás otra cosa, te redirige al módulo que corresponde.",
     aiAsk: "./preguntar", aiWait: "pensando…", aiErr: "No respondió. Revisá tu internet e intentá de nuevo.",
     aiPh: "¿por qué un Pod no se expone directo?", askQ: "preguntar sobre esta", aiLong: "Muy larga, resumila en 300 caracteres.",
@@ -46,6 +47,7 @@ const I18N = {
     total: "total score", rank: "rank", copy: "copy report to share", copied: " copied.",
     copyFail: " couldn't copy, select the text.", pass: "pass", lab: "lab",
     exerciseDone: "done it", reportUser: "$ ./my-report --user",
+    prev: "previous", next: "next", course: "./course-content",
     aiTab: "05 · AI", aiTitle: "ask the AI tutor", aiHint: "Free model, no account. It only answers from this module's syllabus (quiz + cited book). Anything else gets redirected to the right module.",
     aiAsk: "./ask", aiWait: "thinking…", aiErr: "No answer. Check your connection and retry.",
     aiPh: "why isn't a Pod exposed directly?", askQ: "ask about this", aiLong: "Too long, keep it under 300 chars.",
@@ -65,8 +67,6 @@ let tries = store.get("kfs_tries", {});
 let logsOk = store.get("kfs_logs", {});
 let exDone = store.get("kfs_ex", {});
 let whoami = store.get("kfs_name", "anon");
-let tab = store.get("kfs_tab", "doc");
-const TABSECS = {doc: "doc", quiz: "quiz", ex: "ex", valid: "valid", ai: "ai"};
 let aiCtx = null;
 
 function rank(s) {
@@ -169,6 +169,7 @@ function applyLang() {
   document.documentElement.lang = LANG;
   $("#langBtn").textContent = LANG === "es" ? "ES" : "EN";
   $("#subtitle").textContent = t("subtitle");
+  $("#curTitle").textContent = "$ " + t("course");
   renderHero();
 }
 function renderHero() {
@@ -208,8 +209,9 @@ function renderMods() {
   });
   const total = MODULES.filter(modPassed).length;
   const pts = scoreTotal();
-  $("#total").textContent = `${t("score")}: ${pts}/500 · ${t("mods")}: ${total}/${MODULES.length}`;
-  $("#bar").style.width = `${Math.round((pts / 500) * 100)}%`;
+  const pct = Math.round((total / MODULES.length) * 100);
+  $("#total").textContent = `${t("score")}: ${pts}/500 · ${t("mods")}: ${total}/${MODULES.length} (${pct}%)`;
+  $("#bar").style.width = `${pct}%`;
   renderReport();
 }
 function select(id) {
@@ -222,33 +224,18 @@ function select(id) {
   renderEx(m);
   renderValidator(m);
   renderAI(m);
-  renderTabs(m);
+  renderNav();
   renderMods();
 }
-function tabsFor(m) {
-  const all = ["doc", "quiz", "ex", "ai", "valid"];
-  const list = m.validator ? all : all.filter((x) => x !== "valid");
-  if (!list.includes(tab)) tab = "doc";
-  return list;
-}
-function tabLabel(id) {
-  return {doc: "read", quiz: "quiz", ex: "ex", ai: "aiTab", valid: "valid"}[id];
-}
-function renderTabs(m) {
-  const box = $("#tabs");
-  box.innerHTML = "";
-  tabsFor(m).forEach((id) => {
-    const label = t(tabLabel(id));
-    const word = (label.split("·")[1] || label).trim();
-    const b = document.createElement("button");
-    b.className = "tab" + (id === tab ? " active" : "");
-    b.innerHTML = `<span class="n">$</span> ${esc(word)}`;
-    b.onclick = () => { tab = id; store.set("kfs_tab", id); renderTabs(m); document.getElementById("tabs").scrollIntoView({block: "start"}); };
-    box.appendChild(b);
-  });
-  for (const [id, sec] of Object.entries(TABSECS)) {
-    document.getElementById(sec).style.display = id === tab ? "" : "none";
-  }
+function renderNav() {
+  const i = MODULES.findIndex((x) => x.id === cur);
+  const prev = $("#prevMod"), next = $("#nextMod");
+  prev.textContent = "← " + t("prev");
+  next.textContent = t("next") + " →";
+  prev.disabled = i <= 0;
+  next.disabled = i < 0 || i >= MODULES.length - 1;
+  prev.onclick = () => { if (i > 0) { select(MODULES[i - 1].id); window.scrollTo({top: 0}); } };
+  next.onclick = () => { if (i < MODULES.length - 1) { select(MODULES[i + 1].id); window.scrollTo({top: 0}); } };
 }
 async function renderDoc(m) {
   const box = $("#doc");
@@ -302,9 +289,8 @@ function renderQuiz(m) {
     ask.textContent = "? " + t("askQ");
     ask.onclick = () => {
       aiCtx = (LANG === "en" ? "About the quiz question: " : "Sobre esta pregunta del quiz: ") + it.q;
-      tab = "ai"; store.set("kfs_tab", "ai");
-      renderAI(m); renderTabs(m);
-      document.getElementById("tabs").scrollIntoView({block: "start"});
+      renderAI(m);
+      document.getElementById("ai").scrollIntoView({block: "start"});
     };
     div.appendChild(ask);
     box.appendChild(div);
