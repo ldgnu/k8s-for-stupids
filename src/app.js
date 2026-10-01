@@ -12,7 +12,7 @@ const I18N = {
     need45: "necesitas 4/5", firstTry: "10pts al primer intento, 5 si corregiste",
     correct: "exit 0 — correcto, bien ahí.", wrong: "exit 1 — te equivocaste.",
     whyWrong: "Por qué está mal:", theFix: "La posta:", reread: "Relee:",
-    modPass: "MÓDULO APROBADO", quizOkNeedLog: "quiz OK — falta pegar el log abajo para cerrar el módulo.",
+    modPass: "MÓDULO APROBADO", quizOkNeedLog: "falta pegar el log abajo para cerrar el módulo.", quizOk: "quiz OK",
     nextMod: "Bien ahí. Pasá al siguiente módulo.", correctas: "correctas",
     noLog: "$ validator — este módulo no pide log.", paste: "pega acá la salida tal cual...",
     validate: "./validate", reset: "reset progreso", empty: "Vacío. Pega algo.",
@@ -26,7 +26,7 @@ const I18N = {
     aiAsk: "./preguntar", aiWait: "pensando…", aiErr: "No respondió. Revisá tu internet e intentá de nuevo.",
     aiPh: "¿por qué un Pod no se expone directo?", askQ: "preguntar sobre esta", aiLong: "Muy larga, resumila en 300 caracteres.",
     heroTitle: "¿Primera vez acá? Tranqui, es así:",
-    heroSteps: ["<b>Lee</b> el módulo (sección 01, el texto está acá mismo).", "<b>Respondé</b> el quiz (sección 02). Si fallás te explico por qué, sin nota.", "<b>Hacé</b> los ejercicios en tu compu y <b>pegá</b> el log para validar (secciones 03 y 04)."],
+    heroSteps: ["Leé el módulo de arriba abajo (el texto está acá mismo).", "Respondé el quiz que está más abajo. Si fallás te explico por qué, sin nota.", "Hacé los ejercicios en tu compu y pegá el log para validarlo.", "Cuando esté todo, tocá <b>siguiente</b> y seguí con el próximo módulo."],
     heroNote: "4 de 5 en el quiz + 1 log válido = módulo aprobado. Nadie ve tu progreso, queda en tu navegador.",
     rankHi: {"CrashLoopBackOff": "recién arrancás, todo bien", "Pending": "calentando motores", "ContainerCreating": "armando tu cluster mental", "Running": "ya vas andando solo", "Ready": "listo para migrar de verdad", "Cluster Admin": "ya podés enseñar a otros"},
     shareText: (u, p, r, m, t, l, lt, e, et) => `⎈ k8s-for-stupids — reporte de ${u}\nScore: ${p}/500 · Rango: ${r}\nMódulos: ${m}/${t} · Labs: ${l}/${lt} · Ejercicios: ${e}/${et}`
@@ -38,7 +38,7 @@ const I18N = {
     need45: "you need 4/5", firstTry: "10pts first try, 5 if you corrected",
     correct: "exit 0 — correct, nice.", wrong: "exit 1 — you got it wrong.",
     whyWrong: "Why it's wrong:", theFix: "The truth:", reread: "Re-read:",
-    modPass: "MODULE PASSED", quizOkNeedLog: "quiz OK — paste the log below to close the module.",
+    modPass: "MODULE PASSED", quizOkNeedLog: "paste the log below to close the module.", quizOk: "quiz OK",
     nextMod: "Nice. Move to the next module.", correctas: "correct",
     noLog: "$ validator — this module needs no log.", paste: "paste the raw output here...",
     validate: "./validate", reset: "reset progress", empty: "Empty. Paste something.",
@@ -52,7 +52,7 @@ const I18N = {
     aiAsk: "./ask", aiWait: "thinking…", aiErr: "No answer. Check your connection and retry.",
     aiPh: "why isn't a Pod exposed directly?", askQ: "ask about this", aiLong: "Too long, keep it under 300 chars.",
     heroTitle: "First time here? No stress, it works like this:",
-    heroSteps: ["<b>Read</b> the module (section 01, the text is right here).", "<b>Answer</b> the quiz (section 02). If you fail I explain why, no grades.", "<b>Do</b> the exercises on your machine and <b>paste</b> the log to validate (sections 03 and 04)."],
+    heroSteps: ["Read the module from top to bottom (the text is right here).", "Answer the quiz further down. If you fail I explain why, no grades.", "Do the exercises on your machine and paste the log to validate it.", "When it's all done, hit <b>next</b> and move to the following module."],
     heroNote: "4 of 5 on the quiz + 1 valid log = module passed. Nobody sees your progress, it stays in your browser.",
     rankHi: {"CrashLoopBackOff": "just starting out, that's fine", "Pending": "warming up", "ContainerCreating": "building your mental cluster", "Running": "you're walking on your own", "Ready": "ready to migrate for real", "Cluster Admin": "you can teach others"},
     shareText: (u, p, r, m, t, l, lt, e, et) => `⎈ k8s-for-stupids — ${u}'s report\nScore: ${p}/500 · Rank: ${r}\nModules: ${m}/${t} · Labs: ${l}/${lt} · Exercises: ${e}/${et}`
@@ -301,7 +301,7 @@ function renderQuiz(m) {
   if (ok >= 4 && labOk) {
     p.innerHTML = `<div class="term" style="border-color:var(--ok)"><span class="ok">✔ ${t("modPass")} — ${ok}/${list.length} ${t("correctas")} · ${scoreMod(m.id)}pts${m.validator ? " · log ✓" : ""}.</span><br>${t("nextMod")} ${esc(whoami)}.</div>`;
   } else if (ok >= 4) {
-    p.innerHTML = `${t("score")}: <b>${ok}/${list.length} ${t("correctas")} · ${scoreMod(m.id)}/${list.length * 10}pts</b> <span class="ok">quiz OK</span> <span class="err">— ${t("quizOkNeedLog")}</span>`;
+    p.innerHTML = `<span class="ok">${t("quizOk")}</span> <span class="err">— ${t("quizOkNeedLog")}</span>`;
   } else {
     p.innerHTML = `${t("score")}: <b>${ok}/${list.length} ${t("correctas")} · ${scoreMod(m.id)}/${list.length * 10}pts</b> <span class="muted">${t("need45")} (${t("firstTry")})</span>`;
   }
